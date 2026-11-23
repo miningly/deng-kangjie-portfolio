@@ -20,4 +20,3 @@ The site is buildless and can be previewed by opening `index.html` in a browser 
 2. Add project assets under `assets/` and provide meaningful alt text.
 3. Add the project data to the `portfolioProjects` array in `projects.js`.
 4. Keep the homepage directory and project-page quick directory limited to the current project set.
-
