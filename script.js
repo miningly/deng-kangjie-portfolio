@@ -87,4 +87,61 @@ if (lightbox) {
   });
 }
 
+const header = document.querySelector('.site-header');
+const renderHeaderState = () => {
+  header?.classList.toggle('is-scrolled', window.scrollY > 6);
+};
+renderHeaderState();
+window.addEventListener('scroll', renderHeaderState, { passive: true });
+
+const dock = document.querySelector('[data-dock]');
+if (dock) {
+  const track = dock.querySelector('[data-dock-track]');
+  const pill = dock.querySelector('[data-dock-pill]');
+  const items = [...dock.querySelectorAll('[data-dock-item]')];
+  const count = dock.querySelector('[data-dock-count]');
+  const activeIndex = () => Math.max(0, items.findIndex(item => item.classList.contains('is-active')));
+
+  const placeDockPill = () => {
+    const active = items.find(item => item.classList.contains('is-active'));
+    if (!active || !track || !pill) return;
+    const trackRect = track.getBoundingClientRect();
+    const activeRect = active.getBoundingClientRect();
+    pill.style.setProperty('--dock-x', `${Math.round(activeRect.left - trackRect.left)}px`);
+    pill.style.setProperty('--dock-w', `${Math.round(activeRect.width)}px`);
+    pill.classList.add('is-ready');
+  };
+
+  const moveProject = delta => {
+    if (!items.length) return;
+    const nextIndex = (activeIndex() + delta + items.length) % items.length;
+    const nextItem = items[nextIndex];
+    if (nextItem) window.location.href = nextItem.href;
+  };
+
+  dock.querySelector('[data-dock-prev]')?.addEventListener('click', () => moveProject(-1));
+  dock.querySelector('[data-dock-next]')?.addEventListener('click', () => moveProject(1));
+  if (count) count.textContent = `${String(activeIndex() + 1).padStart(2, '0')} / ${String(items.length).padStart(2, '0')}`;
+  placeDockPill();
+  window.addEventListener('resize', placeDockPill, { passive: true });
+  document.fonts?.ready.then(placeDockPill).catch(() => {});
+  document.addEventListener('keydown', event => {
+    if (event.metaKey || event.ctrlKey || event.altKey) return;
+    if (event.key === '[' || event.key === 'ArrowLeft') moveProject(-1);
+    if (event.key === ']' || event.key === 'ArrowRight') moveProject(1);
+  });
+}
+
+const spyLinks = [...document.querySelectorAll('[data-spy]')];
+if (spyLinks.length && 'IntersectionObserver' in window) {
+  const targets = spyLinks.map(link => document.querySelector(link.getAttribute('href'))).filter(Boolean);
+  const setActiveSpy = id => spyLinks.forEach(link => link.classList.toggle('is-active', link.getAttribute('href') === `#${id}`));
+  const spyObserver = new IntersectionObserver(entries => {
+    const visible = entries.filter(entry => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+    if (visible) setActiveSpy(visible.target.id);
+  }, { rootMargin: '-35% 0px -55% 0px', threshold: 0 });
+  targets.forEach(target => spyObserver.observe(target));
+  if (targets[0]) setActiveSpy(targets[0].id);
+}
+
 
