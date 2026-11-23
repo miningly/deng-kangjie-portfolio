@@ -58,11 +58,25 @@ if ('IntersectionObserver' in window) {
       entry.target.classList.add('visible');
       observer.unobserve(entry.target);
     }
-  }), { threshold: 0.08 });
+  }), { threshold: 0.02, rootMargin: '0px 0px 18% 0px' });
   revealItems.forEach(item => observer.observe(item));
 } else {
   revealItems.forEach(item => item.classList.add('visible'));
 }
+
+const scrollProgress = document.createElement('div');
+scrollProgress.className = 'scroll-progress';
+scrollProgress.setAttribute('aria-hidden', 'true');
+document.body.appendChild(scrollProgress);
+
+const updateScrollProgress = () => {
+  const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = scrollableHeight > 0 ? window.scrollY / scrollableHeight : 0;
+  document.documentElement.style.setProperty('--scroll-progress', `${Math.min(progress, 1) * 100}%`);
+};
+
+updateScrollProgress();
+window.addEventListener('scroll', updateScrollProgress, { passive: true });
 
 const lightbox = document.querySelector('.lightbox');
 if (lightbox) {
@@ -86,4 +100,5 @@ if (lightbox) {
     if (event.key === 'Escape') closeLightbox();
   });
 }
+
 
