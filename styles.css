@@ -162,3 +162,11 @@ body{background-image:radial-gradient(circle at 20% 20%,rgba(23,23,21,.055) 0 1p
 .icons-page .case-study:before{background:linear-gradient(var(--lime),transparent 75%)}
 @media(max-width:900px){.icons-page .case-rail a.is-active{background:#2c2e28;border-color:#6a6e5d;color:#f8f6f0}}
 
+/* Compact desktop case directory */
+@media(min-width:901px){
+  .case-page main{grid-template-columns:minmax(140px,180px) minmax(0,1fr);gap:clamp(24px,4vw,56px);padding-left:clamp(22px,4vw,56px);padding-right:clamp(22px,4vw,56px)}
+  .case-rail{font-size:13px}
+  .case-rail a{grid-template-columns:32px 1fr;gap:8px;padding:14px 0}
+  .case-rail a span{font-size:11px}
+}
+
